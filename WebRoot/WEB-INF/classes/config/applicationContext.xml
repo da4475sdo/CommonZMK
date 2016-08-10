@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+	
+    
+    <!-- 启用spring mvc 注解 -->
+    <mvc:annotation-driven/>
+    
+    <!-- 扫描控制器 -->
+    <context:component-scan base-package="controller"/>
+	
+    <!-- 引入JDBC配置文件 -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+        <property name="locations">  
+           <list>  
+              <value>classpath:config/jdbc.properties</value>  
+            </list>  
+        </property>  
+    </bean> 
+    <!-- dbcp数据源 -->  
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${driverClassName}"></property>  
+        <property name="url" value="${url}"></property>  
+        <property name="username" value="${username}"></property>  
+        <property name="password" value="${password}"></property>  
+    </bean>  
+  
+   <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+   		<property name="dataSource">
+  			<ref bean="dataSource" /> 
+  		</property>
+   		<property name="packagesToScan">
+ 			<list>
+			  <value>entity</value>
+			</list>
+		</property>		 
+ 		<property name="hibernateProperties">
+ 			<value>
+ 				hibernate.dialect=org.hibernate.dialect.MySQLDialect
+ 				hibernate.hbm2ddl.auto=update
+ 				hibernate.show_sql=true
+ 				hibernate.format_sql=false
+ 			</value>
+  		</property>
+    </bean>
+    
+    <bean id="hibernateDao" class="dao.HibernateDao">  
+       <property name="sessionFactory" ref="sessionFactory"/> 
+    </bean>
+    <!-- 拦截器 -->  
+    <!-- <mvc:interceptors>  
+        <mvc:interceptor>  
+            <mvc:mapping path="/**" />  
+            <bean class="sy.interceptors.EncodingInterceptor" />  
+        </mvc:interceptor>  
+        <mvc:interceptor>  
+            <mvc:mapping path="/**" />  
+            <bean class="sy.interceptors.AuthInterceptor" />  
+        </mvc:interceptor>  
+    </mvc:interceptors> -->
+</beans>
