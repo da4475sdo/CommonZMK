@@ -1,39 +1,26 @@
 package dao.util;
-
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
 
 import entity.sqlEntity.ConditionEntity;
 
 
 public class SQLOperatorUtil {
-	//等于
-	public static final int EQ=0;
-	//like
-	public static final int LIKE=1;
-	//小于
-	public static final int LT=2;
-	//小于等于
-	public static final int LE=3;
-	//大于
-	public static final int GT=4;
-	//大于等于
-	public static final int GE=5;
-	//between
-	public static final int BETWEEN=6;
-	//isNUll
-	public static final int ISNULL=7;
 	
-	public static void  getCondition(ConditionEntity condition,Criterion cri){
-		switch(condition.getOperation()){
-		case 0:cri=Restrictions.eq(condition.getName(), condition.getValue());break;
-		case 1:cri=Restrictions.like(condition.getName(), condition.getValue());break;
-		case 2:cri=Restrictions.lt(condition.getName(), condition.getValue());break;
-		case 3:cri=Restrictions.le(condition.getName(), condition.getValue());break;
-		case 4:cri=Restrictions.gt(condition.getName(), condition.getValue());break;
-		case 5:cri=Restrictions.ge(condition.getName(), condition.getValue());break;
-		case 6:cri=Restrictions.between(condition.getName(), condition.getValue().split(";")[0],condition.getValue().split(";")[1]);break;
-		case 7:cri=Restrictions.isNull(condition.getName());break;
+	public static final int STRING=0;
+	public static final int INTEGER=1;
+	public static final int BOOLEAN=2;
+	public static final int FLOAT=3;
+	public static final int DOUBLE=4;
+	public static final int TEXT=5;
+	
+	public static void  setCondition(ConditionEntity condition,Query query){
+		switch(condition.getType()){
+		case 0:query.setString(condition.getParamName(), condition.getValue());break;
+		case 1:query.setInteger(condition.getParamName(), Integer.parseInt(condition.getValue()));break;
+		case 2:query.setBoolean(condition.getParamName(), Boolean.parseBoolean(condition.getValue()));break;
+		case 3:query.setFloat(condition.getParamName(), Float.parseFloat(condition.getValue()));break;
+		case 4:query.setDouble(condition.getParamName(), Double.parseDouble(condition.getValue()));break;
+		case 5:query.setText(condition.getParamName(), condition.getValue());break;
 		}
 	}
 }

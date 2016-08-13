@@ -1,93 +1,149 @@
 package dao.util;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import entity.sqlEntity.ConditionEntity;
 import entity.sqlEntity.SQLEntity;
 
 
 public class HibernateUtils {
-	public static void generateSQL(SQLEntity sqlEntity,Criteria mainCriteria){
-		Criteria c=mainCriteria;
-		
-		//配置多表关联
-		if(sqlEntity.isNeedLink()){
-			Map<String,String> alias=sqlEntity.getAlias();
-			Iterator<String> IAlias=alias.keySet().iterator();
-			while(IAlias.hasNext()){
-				c.createAlias(alias.get(IAlias.next()),IAlias.next());
+	public static List<Map<String,Object>> generateSQL(String tableName,SQLEntity sqlEntity,Session session){
+		StringBuilder hql=new StringBuilder();
+		hql.append("select distinct ");
+		String[] properties=sqlEntity.getProperties();
+		//生成查询字段
+		for(int i=0,len=properties.length;i<len;i++){
+			hql.append(properties[i]);
+			if(i<len-1){
+				hql.append(",");
 			}
 		}
-		
-		//配置需要查询的字段
-		String[] properties=sqlEntity.getProperties();
-		ProjectionList proList=Projections.projectionList();
-		for(int i=0,len=properties.length;i<len;i++){
-			proList.add(Projections.property(properties[i]));
-		}
-		c.setProjection(proList);
-		
-		//配置查询条件
+		//设置表名
+		hql.append(" from ").append(tableName);
+		//生成查询条件
 		List<ConditionEntity> conditions=sqlEntity.getCondition();
-		Junction junction=Restrictions.conjunction();
-		for(int i=0,len=conditions.size();i<len;i++){
-			Criterion cri=null;
-			ConditionEntity condition=conditions.get(i);
-			//非组合条件
-			if(!condition.isCombination()){
-				junction=conbinateCondition(condition, cri);
-			}else{
-				ConditionEntity[] conditionArray=condition.getConditionConbination();
-				Junction conbineJunction=null;
-				for(int j=0,leng=conditionArray.length ;j<leng;j++){
-					conbineJunction=conbinateCondition(condition, cri);
-				}
-				if("and".equals(condition.getRelation())){
-					junction.add(Restrictions.and(conbineJunction));
-				}else{
-					junction.add(Restrictions.or(conbineJunction));
-				}
- 			}
+		if(conditions!=null&&conditions.size()!=0){			
+			hql.append(" where");
+			generateConditions(conditions,hql);
 		}
-		c.add(junction);
-		
-		//配置排序字段
+		//生成排序条件
 		String[] sortFields=sqlEntity.getSortField();
-		//配置排序方式
-		String order=sqlEntity.getOrder();
+		String[] orders=sqlEntity.getOrder();
+		hql.append(" order by ");
 		for(int i=0,len=sortFields.length;i<len;i++){
-			Order orderFun="desc".equals(order)?Order.desc(sortFields[i]):Order.asc(sortFields[i]);
-			c.addOrder(orderFun);
+			hql.append(sortFields[i]).append(" ").append(orders[i]);
+			if(i<len-1){
+				hql.append(",");
+			}
 		}
-		
-		//配置当前页数
+		Query query=session.createQuery(hql.toString());
+		//设置查询参数的值
+		for(int i=0,len=conditions.size();i<len;i++){
+			SQLOperatorUtil.setCondition(conditions.get(i), query);
+		}
+		//设置页数
 		int pagination=sqlEntity.getPagination();
-		c.setFirstResult(pagination);
-		
-		//配置每页最大条数
+		query.setFirstResult(pagination);
+		//设置每页的多大条数
 		int limit=sqlEntity.getLimit();
-		c.setMaxResults(limit);
-		c.list();
+		query.setMaxResults(limit);
+		//查询数据
+		List<?> list=query.list();
+		List<Map<String,Object>> dataList=sqlListToListMap(list,properties);
+		return dataList;
 	}
 	
-	private static Junction conbinateCondition(ConditionEntity condition,Criterion cri){
-		Junction junction=Restrictions.conjunction();
-		SQLOperatorUtil.getCondition(condition, cri);
-		if("and".equals(condition.getRelation())){
-			junction.add(Restrictions.and(cri));
-		}else{
-			junction.add(Restrictions.or(cri));
+	public static boolean generateUpdateSQL(String tableName,SQLEntity sqlEntity,Session session){
+		Transaction trans=session.beginTransaction();
+		StringBuilder hql=new StringBuilder();
+		//设置表名
+		hql.append("update ").append(tableName).append(" set ");
+		//设置更新的属性
+		List<ConditionEntity> entitys=sqlEntity.getEntity();
+		for(int i=0,len=entitys.size();i<len;i++){
+			ConditionEntity entity=entitys.get(i);
+			String name=entity.getName();
+			String paramName=entity.getParamName();
+			hql.append(" ").append(name).append("=").append(":").append(paramName).append(" ");
+			if(i<len-1){
+				hql.append(",");
+			}
 		}
-		return junction;
+		//生成查询条件
+		List<ConditionEntity> conditions=sqlEntity.getCondition();
+		if(conditions!=null&&conditions.size()!=0){	
+			hql.append(" where");
+			//生成查询条件
+			generateConditions(conditions,hql);
+		}
+		Query updateQuery=session.createQuery(hql.toString());
+		//设置变量的值
+		conditions.addAll(entitys);
+		for(int i=0,len=conditions.size();i<len;i++){
+			SQLOperatorUtil.setCondition(conditions.get(i), updateQuery);
+		}
+		int result=updateQuery.executeUpdate();
+		trans.commit();
+		if(result>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public static boolean generateDeleteSQL(String tableName,SQLEntity sqlEntity,Session session){
+		Transaction trans=session.beginTransaction();
+		StringBuilder hql=new StringBuilder();
+		//设置表名
+		hql.append("delete ").append("from ").append(tableName);
+		//生成查询条件
+		List<ConditionEntity> conditions=sqlEntity.getCondition();
+		if(conditions!=null&&conditions.size()!=0){	
+			hql.append(" where");
+			//生成查询条件
+			generateConditions(conditions,hql);
+		}
+		Query deleteQuery=session.createQuery(hql.toString());
+		//设置变量的值
+		for(int i=0,len=conditions.size();i<len;i++){
+			SQLOperatorUtil.setCondition(conditions.get(i), deleteQuery);
+		}
+		int result=deleteQuery.executeUpdate();
+		trans.commit();
+		if(result>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public static List<Map<String,Object>> sqlListToListMap(List<?> list,String[] properties){
+		List<Map<String,Object>> listMap=new ArrayList<Map<String,Object>>();
+		for(int i=0,len=list.size();i<len;i++){
+			Object[] datas=(Object[])list.get(i);
+			Map<String,Object> map=new HashMap<String,Object>();
+			for(int j=0,leng=datas.length;j<leng;j++){				
+				map.put(properties[j], datas[j]);
+			}
+			listMap.add(map);
+		}
+		return listMap;
+	}
+	
+	private static void generateConditions(List<ConditionEntity> conditions,StringBuilder hql){
+		for(int i=0,len=conditions.size();i<len;i++){
+			ConditionEntity condition=conditions.get(i);
+			String name=condition.getName();
+			String paramName=condition.getParamName();
+			String operation=condition.getOperation();
+			String relation=condition.getRelation()!=null?condition.getRelation():"";
+			hql.append(" ").append(name).append(operation).append(":").append(paramName).append(" ").append(relation);
+		}
 	}
 }

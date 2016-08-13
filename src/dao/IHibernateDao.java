@@ -8,7 +8,7 @@ import entity.sqlEntity.SQLEntity;
 
 public interface IHibernateDao {
 	public boolean save(Object entity,Class<?> entityType);
-	public boolean update(Object entity,Class<?> entityType);
-	public boolean delete(Object entity,Class<?> entityType);
-	public List<Map<String,Object>> query(Object entity,Class<?> entityType,SQLEntity sqlEntity);
+	public boolean update(Class<?> entityType,SQLEntity sqlEntity);
+	public boolean delete(Class<?> entityType,SQLEntity sqlEntity);
+	public List<Map<String,Object>> query(Class<?> entityType,SQLEntity sqlEntity);
 }

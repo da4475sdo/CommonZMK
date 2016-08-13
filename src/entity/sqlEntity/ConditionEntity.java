@@ -1,5 +1,7 @@
 package entity.sqlEntity;
 
+import java.util.List;
+
 
 public class ConditionEntity {
 	//条件之间的关系
@@ -9,11 +11,29 @@ public class ConditionEntity {
 	//条件的值
 	private String value;
 	//值与名称之间的操作
-	private int operation;
+	private String operation;
 	//是否是组合条件
 	private boolean isCombination;
 	//组合条件
-	private ConditionEntity[] conditionConbination;
+	private List<ConditionEntity> conditionConbination;
+	//参数类型
+	private int type;
+	//参数变量名
+	private String paramName;
+	
+	public String getParamName() {
+		return paramName;
+	}
+	public void setParamName(String paramName) {
+		this.paramName = paramName;
+	}
+	
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
 	
 	public boolean isCombination() {
 		return isCombination;
@@ -22,17 +42,17 @@ public class ConditionEntity {
 		this.isCombination = isCombination;
 	}
 	
-	public ConditionEntity[] getConditionConbination() {
+	public List<ConditionEntity> getConditionConbination() {
 		return conditionConbination;
 	}
-	public void setConditionConbination(ConditionEntity[] conditionConbination) {
+	public void setConditionConbination(List<ConditionEntity> conditionConbination) {
 		this.conditionConbination = conditionConbination;
 	}
 	
-	public int getOperation() {
+	public String getOperation() {
 		return operation;
 	}
-	public void setOperation(int operation) {
+	public void setOperation(String operation) {
 		this.operation = operation;
 	}
 	

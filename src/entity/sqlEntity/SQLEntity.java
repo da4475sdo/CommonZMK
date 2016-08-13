@@ -1,5 +1,6 @@
 package entity.sqlEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public class SQLEntity {
 	//排序字段
 	private String[] sortField;
 	//排序方式
-	private String order;
+	private String[] order;
 	//当前页数
 	private int pagination;
 	//每页最大条数
@@ -21,6 +22,20 @@ public class SQLEntity {
 	private boolean needLink;
 	//关联表
 	private Map<String,String> alias;
+	//实体属性和值
+	private List<ConditionEntity> entity;
+	
+	public SQLEntity(){
+		this.condition=new ArrayList<ConditionEntity>();
+		this.entity=new ArrayList<ConditionEntity>();
+	}
+	
+	public List<ConditionEntity> getEntity() {
+		return entity;
+	}
+	public void setEntity(List<ConditionEntity> entity) {
+		this.entity = entity;
+	}
 	
 	public Map<String, String> getAlias() {
 		return alias;
@@ -71,10 +86,18 @@ public class SQLEntity {
 		this.sortField = sortField;
 	}
 	
-	public String getOrder() {
+	public String[] getOrder() {
 		return order;
 	}
-	public void setOrder(String order) {
+	public void setOrder(String[] order) {
 		this.order = order;
+	}
+	
+	public void addCondition(ConditionEntity condition){
+		this.condition.add(condition);
+	}
+	
+	public void addEntity(ConditionEntity condition){
+		this.entity.add(condition);
 	}
 }

@@ -2,11 +2,8 @@ package dao;
 
 import java.util.List;
 import java.util.Map;
-
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
 import dao.util.HibernateUtils;
 import entity.sqlEntity.SQLEntity;
 
@@ -37,14 +34,12 @@ public class HibernateDao implements IHibernateDao{
 	}
 	
 	@Override
-	public boolean update(Object entity,Class<?> entityType){
+	public boolean update(Class<?> entityType,SQLEntity sqlEntity){
 		Session session=null;
 		try{			
 			session=sessionFactory.openSession();
-			session.beginTransaction();
-			session.update(entityType.cast(entity));
-			session.getTransaction().commit();
-			return true;
+			String tableName=entityType.getSimpleName();
+			return HibernateUtils.generateUpdateSQL(tableName, sqlEntity, session);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			session.getTransaction().rollback(); 
@@ -55,14 +50,12 @@ public class HibernateDao implements IHibernateDao{
 	}
 
 	@Override
-	public boolean delete(Object entity, Class<?> entityType) {
+	public boolean delete(Class<?> entityType,SQLEntity sqlEntity) {
 		Session session=null;
 		try{			
 			session=sessionFactory.openSession();
-			session.beginTransaction();
-			session.delete(entityType.cast(entity));
-			session.getTransaction().commit();
-			return true;
+			String tableName=entityType.getSimpleName();
+			return HibernateUtils.generateDeleteSQL(tableName, sqlEntity, session);
 		}catch(Exception ex){
 			ex.printStackTrace();
 			session.getTransaction().rollback(); 
@@ -73,10 +66,9 @@ public class HibernateDao implements IHibernateDao{
 	}
 
 	@Override
-	public List<Map<String, Object>> query(Object entity, Class<?> entityType,SQLEntity sqlEntity) {
+	public List<Map<String, Object>> query(Class<?> entityType,SQLEntity sqlEntity) {
 		Session session=sessionFactory.openSession();
-		Criteria mainCriteria=session.createCriteria(entityType);
-		HibernateUtils.generateSQL(sqlEntity, mainCriteria);
-		return null;
+		String tableName=entityType.getSimpleName();
+		return HibernateUtils.generateSQL(tableName,sqlEntity,session);
 	}
 }
