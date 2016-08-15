@@ -14,13 +14,15 @@ public class SQLOperatorUtil {
 	public static final int TEXT=5;
 	
 	public static void  setCondition(ConditionEntity condition,Query query){
-		switch(condition.getType()){
-		case 0:query.setString(condition.getParamName(), condition.getValue());break;
-		case 1:query.setInteger(condition.getParamName(), Integer.parseInt(condition.getValue()));break;
-		case 2:query.setBoolean(condition.getParamName(), Boolean.parseBoolean(condition.getValue()));break;
-		case 3:query.setFloat(condition.getParamName(), Float.parseFloat(condition.getValue()));break;
-		case 4:query.setDouble(condition.getParamName(), Double.parseDouble(condition.getValue()));break;
-		case 5:query.setText(condition.getParamName(), condition.getValue());break;
+		if(!condition.isCombination()){			
+			switch(condition.getType()){
+			case 0:query.setString(condition.getParamName(), condition.getValue());break;
+			case 1:query.setInteger(condition.getParamName(), Integer.parseInt(condition.getValue()));break;
+			case 2:query.setBoolean(condition.getParamName(), Boolean.parseBoolean(condition.getValue()));break;
+			case 3:query.setFloat(condition.getParamName(), Float.parseFloat(condition.getValue()));break;
+			case 4:query.setDouble(condition.getParamName(), Double.parseDouble(condition.getValue()));break;
+			case 5:query.setText(condition.getParamName(), condition.getValue());break;
+			}
 		}
 	}
 }

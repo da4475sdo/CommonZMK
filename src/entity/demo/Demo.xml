@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table-links>
+	<table-link id="demoQuery" tables="Demo,User"  alias="de,us">
+		<link-field>de.demoID=us.id</link-field>
+	</table-link>
+</table-links>

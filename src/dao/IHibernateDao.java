@@ -11,4 +11,5 @@ public interface IHibernateDao {
 	public boolean update(Class<?> entityType,SQLEntity sqlEntity);
 	public boolean delete(Class<?> entityType,SQLEntity sqlEntity);
 	public List<Map<String,Object>> query(Class<?> entityType,SQLEntity sqlEntity);
+	public List<Map<String,Object>> queryLinked(Class<?> entity,SQLEntity sqlEntity);
 }

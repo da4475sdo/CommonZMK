@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,10 +26,10 @@ public class DemoController {
 		demo.setName("zmk");
 		SQLEntity sqlEntity=new SQLEntity();
 		sqlEntity.setProperties(new String[]{"demoID","name"});
-		/*ConditionEntity condition1=new ConditionEntity();
+		ConditionEntity condition1=new ConditionEntity();
 		ConditionEntity condition2=new ConditionEntity();
 		ConditionEntity condition3=new ConditionEntity();
-		condition1.setCombination(false);
+		condition1.setCombination(true);
 		condition1.setName("name");
 		condition1.setParamName("name1");
 		condition1.setRelation("and");
@@ -46,26 +49,21 @@ public class DemoController {
 		condition3.setValue("333");
 		condition3.setOperation("=");
 		condition3.setType(SQLOperatorUtil.STRING);
+		List<ConditionEntity> conbinaCons=new ArrayList<ConditionEntity>();
+		conbinaCons.add(condition2);
+		conbinaCons.add(condition3);
+		condition1.setConditionConbination(conbinaCons);
 		sqlEntity.addCondition(condition1);
 		sqlEntity.addCondition(condition2);
-		sqlEntity.addCondition(condition3);*/
-		ConditionEntity condition1=new ConditionEntity();
-		ConditionEntity condition3=new ConditionEntity();
-		condition1.setName("name");
-		condition1.setValue("zmk");
-		condition1.setParamName("name");
-		sqlEntity.addEntity(condition1);
-		condition3.setCombination(false);
-		condition3.setName("demoID");
-		condition3.setParamName("demoID2");
-		condition3.setValue("111");
-		condition3.setOperation("=");
 		sqlEntity.addCondition(condition3);
-		/*sqlEntity.setLimit(10);
+		
+		
+		
+		sqlEntity.setLimit(10);
 		sqlEntity.setPagination(0);
 		sqlEntity.setNeedLink(false);
 		sqlEntity.setOrder(new String[]{"desc"});
-		sqlEntity.setSortField(new String[]{"demoID"});*/
-		return "hello World"+dao.delete(Demo.class,sqlEntity);
+		sqlEntity.setSortField(new String[]{"demoID"});
+		return "hello World"+dao.query(Demo.class,sqlEntity);
 	}
 }

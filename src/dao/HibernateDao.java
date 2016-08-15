@@ -71,4 +71,11 @@ public class HibernateDao implements IHibernateDao{
 		String tableName=entityType.getSimpleName();
 		return HibernateUtils.generateSQL(tableName,sqlEntity,session);
 	}
+
+	@Override
+	public List<Map<String, Object>> queryLinked(Class<?> entity,
+			SQLEntity sqlEntity) {
+		Session session=sessionFactory.openSession();
+		return HibernateUtils.generateSQL("",sqlEntity,session);
+	}
 }

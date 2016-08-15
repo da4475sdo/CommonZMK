@@ -24,8 +24,12 @@ public class HibernateUtils {
 				hql.append(",");
 			}
 		}
-		//设置表名
-		hql.append(" from ").append(tableName);
+		//设置单表查询的表名
+		if(!sqlEntity.isNeedLink()){			
+			hql.append(" from ").append(tableName);
+		}else{//设置多表关联查询表名
+			
+		}
 		//生成查询条件
 		List<ConditionEntity> conditions=sqlEntity.getCondition();
 		if(conditions!=null&&conditions.size()!=0){			
@@ -139,11 +143,25 @@ public class HibernateUtils {
 	private static void generateConditions(List<ConditionEntity> conditions,StringBuilder hql){
 		for(int i=0,len=conditions.size();i<len;i++){
 			ConditionEntity condition=conditions.get(i);
-			String name=condition.getName();
-			String paramName=condition.getParamName();
-			String operation=condition.getOperation();
+			boolean isCombination=condition.isCombination();
 			String relation=condition.getRelation()!=null?condition.getRelation():"";
-			hql.append(" ").append(name).append(operation).append(":").append(paramName).append(" ").append(relation);
+			//非复合条件
+			if(!isCombination){				
+				String name=condition.getName();
+				String paramName=condition.getParamName();
+				String operation=condition.getOperation();
+				hql.append(" ").append(name).append(operation).append(":").append(paramName).append(" ").append(relation);
+			}else{
+				List<ConditionEntity> CombinationCons=condition.getConditionConbination();
+				hql.append(" (");
+				generateConditions(CombinationCons, hql);
+				hql.append(") ");
+				hql.append(relation);
+			}
 		}
+	}
+	
+	public static void configLinks(){
+		
 	}
 }
