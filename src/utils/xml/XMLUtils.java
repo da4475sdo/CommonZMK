@@ -12,8 +12,9 @@ public class XMLUtils {
 	//Ω‚ŒˆXML
 	public static Element parserXml(String fileName) {   
 		SAXBuilder builder=new SAXBuilder(false);    
-		try {   
-			Document document=builder.build(fileName);   
+		try {
+			String basePath=XMLUtils.class.getResource("/").getPath();
+			Document document=builder.build(basePath+fileName);   
 			Element employees=document.getRootElement();    
 			return  employees;   
 		}catch (JDOMException ex) {   

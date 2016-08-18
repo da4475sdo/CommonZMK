@@ -7,7 +7,11 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.xpath.XPath;
 
+import utils.xml.XMLUtils;
 import entity.sqlEntity.ConditionEntity;
 import entity.sqlEntity.SQLEntity;
 
@@ -28,12 +32,26 @@ public class HibernateUtils {
 		if(!sqlEntity.isNeedLink()){			
 			hql.append(" from ").append(tableName);
 		}else{//设置多表关联查询表名
-			
+			String[] links=tableName.split(";");
+			if(links!=null&&links.length>=2){				
+				String table=links[0];
+				String queryName=links[1];
+				try {
+					StringBuilder linkedCondition=configLinks(hql, table, queryName);
+					hql.append(" where ").append(linkedCondition.toString());
+				} catch (JDOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+			}else{
+				return null;
+			}
 		}
 		//生成查询条件
 		List<ConditionEntity> conditions=sqlEntity.getCondition();
-		if(conditions!=null&&conditions.size()!=0){			
-			hql.append(" where");
+		if(conditions!=null&&conditions.size()!=0){
+			hql=sqlEntity.isNeedLink()?hql.append(" and "):hql.append(" where");
 			generateConditions(conditions,hql);
 		}
 		//生成排序条件
@@ -46,21 +64,8 @@ public class HibernateUtils {
 				hql.append(",");
 			}
 		}
-		Query query=session.createQuery(hql.toString());
-		//设置查询参数的值
-		for(int i=0,len=conditions.size();i<len;i++){
-			SQLOperatorUtil.setCondition(conditions.get(i), query);
-		}
-		//设置页数
-		int pagination=sqlEntity.getPagination();
-		query.setFirstResult(pagination);
-		//设置每页的多大条数
-		int limit=sqlEntity.getLimit();
-		query.setMaxResults(limit);
-		//查询数据
-		List<?> list=query.list();
-		List<Map<String,Object>> dataList=sqlListToListMap(list,properties);
-		return dataList;
+		
+		return queryData(hql.toString(), session, sqlEntity, conditions, properties);
 	}
 	
 	public static boolean generateUpdateSQL(String tableName,SQLEntity sqlEntity,Session session){
@@ -161,7 +166,68 @@ public class HibernateUtils {
 		}
 	}
 	
-	public static void configLinks(){
+	public static List<Map<String,Object>> generateLinkedSQL(String tableName,String queryName,SQLEntity sqlEntity,Session session){
+		return generateSQL(tableName+";"+queryName, sqlEntity, session);
+	}
+	
+	public static List<Map<String,Object>> generateCustomSQL(String tableName,String queryName,Session session,SQLEntity sqlEntity,String[] properties) throws JDOMException{
+		String xmlFile="/entity/"+tableName+"/"+tableName+".xml";
+		Element root = XMLUtils.parserXml(xmlFile);
+		XPath xPath=XPath.newInstance("/table-links/sql-query[@id='"+queryName+"']");
+		Element cutomSql=(Element)xPath.selectSingleNode(root);
+		String sql=cutomSql.getText();
+		return queryData(sql, session, sqlEntity, null, properties);
+	}
+	
+	public static StringBuilder configLinks(StringBuilder hql,String tableName,String queryName) throws JDOMException{
+		StringBuilder linkedCondition=new StringBuilder();
+		String xmlFile="/entity/"+tableName+"/"+tableName+".xml";
+		Element root = XMLUtils.parserXml(xmlFile);
+		XPath xPath=XPath.newInstance("/table-links/table-link[@id='"+queryName+"']");
+		Element link=(Element)xPath.selectSingleNode(root);
+		String mainTable=link.getAttributeValue("table");
+		String mainTableAlia=link.getAttributeValue("alia");
+		if(mainTableAlia!=null&&!"".equals(mainTableAlia)){			
+			hql.append(" from ").append(mainTable).append(" as ").append(mainTableAlia);
+		}else{
+			hql.append(" from ").append(mainTable);
+		}
+		hql.append(",");
 		
+		List<?> linkFields=link.getChildren();
+		for(int i=0,len=linkFields.size();i<len;i++){
+			Element linkField=(Element)linkFields.get(i);
+			String linkedTable=linkField.getAttributeValue("table");
+			String linkedTableAlia=linkField.getAttributeValue("alia");
+			String linkedContent=linkField.getText();
+			if(linkedTableAlia!=null&&!"".equals(linkedTableAlia)){
+				hql.append(linkedTable).append(" as ").append(linkedTableAlia);
+			}
+			//添加连表条件
+			linkedCondition.append(linkedContent);
+			if(i<len-1){
+				hql.append(",");
+				linkedCondition.append(" and ");
+			}
+		}
+		return linkedCondition;
+	}
+	
+	public static List<Map<String,Object>> queryData(String hql,Session session,SQLEntity sqlEntity,List<ConditionEntity> conditions,String[] properties){
+		Query query=session.createQuery(hql.toString());
+		//设置查询参数的值
+		for(int i=0,len=conditions.size();i<len;i++){
+			SQLOperatorUtil.setCondition(conditions.get(i), query);
+		}
+		//设置页数
+		int pagination=sqlEntity.getPagination();
+		query.setFirstResult(pagination);
+		//设置每页的多大条数
+		int limit=sqlEntity.getLimit();
+		query.setMaxResults(limit);
+		//查询数据
+		List<?> list=query.list();
+		List<Map<String,Object>> dataList=sqlListToListMap(list,properties);
+		return dataList;
 	}
 }

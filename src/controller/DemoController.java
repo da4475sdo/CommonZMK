@@ -25,26 +25,26 @@ public class DemoController {
 		demo.setDemoID("111");
 		demo.setName("zmk");
 		SQLEntity sqlEntity=new SQLEntity();
-		sqlEntity.setProperties(new String[]{"demoID","name"});
+		sqlEntity.setProperties(new String[]{"de.demoID","de.name"});
 		ConditionEntity condition1=new ConditionEntity();
 		ConditionEntity condition2=new ConditionEntity();
 		ConditionEntity condition3=new ConditionEntity();
 		condition1.setCombination(true);
-		condition1.setName("name");
+		condition1.setName("de.name");
 		condition1.setParamName("name1");
 		condition1.setRelation("and");
 		condition1.setValue("zmk");
 		condition1.setOperation("=");
 		condition1.setType(SQLOperatorUtil.STRING);
 		condition2.setCombination(false);
-		condition2.setName("demoID");
+		condition2.setName("de.demoID");
 		condition2.setParamName("demoID1");
 		condition2.setRelation("or");
-		condition2.setValue("111");
+		condition2.setValue("333");
 		condition2.setOperation("=");
 		condition2.setType(SQLOperatorUtil.STRING);
 		condition3.setCombination(false);
-		condition3.setName("demoID");
+		condition3.setName("de.demoID");
 		condition3.setParamName("demoID2");
 		condition3.setValue("333");
 		condition3.setOperation("=");
@@ -61,9 +61,8 @@ public class DemoController {
 		
 		sqlEntity.setLimit(10);
 		sqlEntity.setPagination(0);
-		sqlEntity.setNeedLink(false);
 		sqlEntity.setOrder(new String[]{"desc"});
-		sqlEntity.setSortField(new String[]{"demoID"});
-		return "hello World"+dao.query(Demo.class,sqlEntity);
+		sqlEntity.setSortField(new String[]{"de.demoID"});
+		return "hello World"+dao.queryLinked("Demo","demoQuery", sqlEntity);
 	}
 }

@@ -10,6 +10,7 @@ public interface IHibernateDao {
 	public boolean save(Object entity,Class<?> entityType);
 	public boolean update(Class<?> entityType,SQLEntity sqlEntity);
 	public boolean delete(Class<?> entityType,SQLEntity sqlEntity);
-	public List<Map<String,Object>> query(Class<?> entityType,SQLEntity sqlEntity);
-	public List<Map<String,Object>> queryLinked(Class<?> entity,SQLEntity sqlEntity);
+	public List<Map<String,Object>> query(String tableName,SQLEntity sqlEntity);
+	public List<Map<String,Object>> queryLinked(String tableName,String queryName,SQLEntity sqlEntity);
+	public List<Map<String,Object>> queryCustom(String table,String queryName);
 }

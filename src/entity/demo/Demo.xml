@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table-links>
-	<table-link id="demoQuery" tables="Demo,User"  alias="de,us">
-		<link-field>de.demoID=us.id</link-field>
+	<table-link id="demoQuery" table="Demo"  alia="de">
+		<link-field table="User" alia="us">de.demoID=us.id</link-field>
 	</table-link>
+	<sql-query id="demoUniqueSql">select name from demo</sql-query>
 </table-links>

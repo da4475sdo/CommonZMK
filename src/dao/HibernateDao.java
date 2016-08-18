@@ -66,16 +66,21 @@ public class HibernateDao implements IHibernateDao{
 	}
 
 	@Override
-	public List<Map<String, Object>> query(Class<?> entityType,SQLEntity sqlEntity) {
+	public List<Map<String, Object>> query(String tableName,SQLEntity sqlEntity) {
 		Session session=sessionFactory.openSession();
-		String tableName=entityType.getSimpleName();
 		return HibernateUtils.generateSQL(tableName,sqlEntity,session);
 	}
 
 	@Override
-	public List<Map<String, Object>> queryLinked(Class<?> entity,
-			SQLEntity sqlEntity) {
+	public List<Map<String, Object>> queryLinked(String tableName,String queryName,SQLEntity sqlEntity) {
 		Session session=sessionFactory.openSession();
-		return HibernateUtils.generateSQL("",sqlEntity,session);
+		sqlEntity.setNeedLink(true);
+		return HibernateUtils.generateLinkedSQL(tableName, queryName, sqlEntity, session);
+	}
+
+	@Override
+	public List<Map<String, Object>> queryCustom(String table, String queryName) {
+		Session seesion=sessionFactory.openSession();
+		return null;
 	}
 }
