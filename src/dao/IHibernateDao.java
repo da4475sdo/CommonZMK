@@ -12,5 +12,5 @@ public interface IHibernateDao {
 	public boolean delete(Class<?> entityType,SQLEntity sqlEntity);
 	public List<Map<String,Object>> query(String tableName,SQLEntity sqlEntity);
 	public List<Map<String,Object>> queryLinked(String tableName,String queryName,SQLEntity sqlEntity);
-	public List<Map<String,Object>> queryCustom(String table,String queryName);
+	public List<Map<String,Object>> queryCustom(String tableName,String queryName,SQLEntity sqlEntity);
 }

@@ -132,6 +132,27 @@ public class HibernateUtils {
 		}
 	}
 	
+	public static List<Map<String,Object>> generateLinkedSQL(String tableName,String queryName,SQLEntity sqlEntity,Session session){
+		return generateSQL(tableName+";"+queryName, sqlEntity, session);
+	}
+	
+	public static List<Map<String,Object>> generateCustomSQL(String tableName,String queryName,Session session,SQLEntity sqlEntity){
+		try {
+			String[] properties=sqlEntity.getProperties();
+			String xmlFile="/entity/"+tableName+"/"+tableName+".xml";
+			Element root = XMLUtils.parserXml(xmlFile);
+			XPath xPath;
+			xPath = XPath.newInstance("/table-links/sql-query[@id='"+queryName+"']");
+			Element cutomSql=(Element)xPath.selectSingleNode(root);
+			String hql=cutomSql.getText();
+			return queryData(hql, session, sqlEntity, null, properties);
+		} catch (JDOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public static List<Map<String,Object>> sqlListToListMap(List<?> list,String[] properties){
 		List<Map<String,Object>> listMap=new ArrayList<Map<String,Object>>();
 		for(int i=0,len=list.size();i<len;i++){
@@ -164,19 +185,6 @@ public class HibernateUtils {
 				hql.append(relation);
 			}
 		}
-	}
-	
-	public static List<Map<String,Object>> generateLinkedSQL(String tableName,String queryName,SQLEntity sqlEntity,Session session){
-		return generateSQL(tableName+";"+queryName, sqlEntity, session);
-	}
-	
-	public static List<Map<String,Object>> generateCustomSQL(String tableName,String queryName,Session session,SQLEntity sqlEntity,String[] properties) throws JDOMException{
-		String xmlFile="/entity/"+tableName+"/"+tableName+".xml";
-		Element root = XMLUtils.parserXml(xmlFile);
-		XPath xPath=XPath.newInstance("/table-links/sql-query[@id='"+queryName+"']");
-		Element cutomSql=(Element)xPath.selectSingleNode(root);
-		String sql=cutomSql.getText();
-		return queryData(sql, session, sqlEntity, null, properties);
 	}
 	
 	public static StringBuilder configLinks(StringBuilder hql,String tableName,String queryName) throws JDOMException{
@@ -216,8 +224,10 @@ public class HibernateUtils {
 	public static List<Map<String,Object>> queryData(String hql,Session session,SQLEntity sqlEntity,List<ConditionEntity> conditions,String[] properties){
 		Query query=session.createQuery(hql.toString());
 		//设置查询参数的值
-		for(int i=0,len=conditions.size();i<len;i++){
-			SQLOperatorUtil.setCondition(conditions.get(i), query);
+		if(conditions!=null&&conditions.size()>0){			
+			for(int i=0,len=conditions.size();i<len;i++){
+				SQLOperatorUtil.setCondition(conditions.get(i), query);
+			}
 		}
 		//设置页数
 		int pagination=sqlEntity.getPagination();

@@ -18,6 +18,10 @@
     <!-- 启用spring mvc 注解 -->
     <mvc:annotation-driven/>
     
+    <!-- 扫描dao -->
+    <context:component-scan base-package="dao"/>
+    <!-- 扫描service-->
+    <context:component-scan base-package="service"/>
     <!-- 扫描控制器 -->
     <context:component-scan base-package="controller"/>
 	
@@ -59,6 +63,7 @@
     <bean id="hibernateDao" class="dao.HibernateDao">  
        <property name="sessionFactory" ref="sessionFactory"/> 
     </bean>
+    
     <!-- 拦截器 -->  
     <!-- <mvc:interceptors>  
         <mvc:interceptor>  

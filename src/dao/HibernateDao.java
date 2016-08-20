@@ -79,8 +79,8 @@ public class HibernateDao implements IHibernateDao{
 	}
 
 	@Override
-	public List<Map<String, Object>> queryCustom(String table, String queryName) {
-		Session seesion=sessionFactory.openSession();
-		return null;
+	public List<Map<String, Object>> queryCustom(String tableName,String queryName,SQLEntity sqlEntity) {
+		Session session=sessionFactory.openSession();
+		return HibernateUtils.generateCustomSQL(tableName, queryName, session, sqlEntity);
 	}
 }

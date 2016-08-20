@@ -3,5 +3,5 @@
 	<table-link id="demoQuery" table="Demo"  alia="de">
 		<link-field table="User" alia="us">de.demoID=us.id</link-field>
 	</table-link>
-	<sql-query id="demoUniqueSql">select name from demo</sql-query>
+	<sql-query id="demoUniqueSql">select name from Demo</sql-query>
 </table-links>
