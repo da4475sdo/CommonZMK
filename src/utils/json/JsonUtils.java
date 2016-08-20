@@ -2,6 +2,7 @@ package utils.json;
 
 import java.util.List;
 import java.util.Map;
+import entity.sqlEntity.SQLEntity;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -12,7 +13,9 @@ public class JsonUtils {
 		return json;
 	}
 	
-	public static List<Map<String,Object>> jsonToListMap(String json){
-		
+	public static SQLEntity jsonToSQLEntity(String json){
+		JSONObject jsonObj=JSONObject.fromObject(json);
+		SQLEntity sqlEntity=(SQLEntity)JSONObject.toBean(jsonObj,SQLEntity.class);
+		return sqlEntity;
 	} 
 }

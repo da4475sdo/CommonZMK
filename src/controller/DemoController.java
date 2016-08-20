@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import service.demoService.Interface.IDemoService;
+import utils.json.JsonUtils;
 import dao.util.SQLOperatorUtil;
 import entity.demo.Demo;
 import entity.sqlEntity.ConditionEntity;
@@ -65,7 +66,9 @@ public class DemoController {
 		sqlEntity.setPagination(0);
 		sqlEntity.setOrder(new String[]{"desc"});
 		sqlEntity.setSortField(new String[]{"demoID"});
-		return JSONArray.fromObject(daoService.getCommonDataList("Demo", sqlEntity)).toString();
-		//return JSONObject.fromObject(new ArrayList<String>())+"";
+		//return JSONArray.fromObject(daoService.getCommonDataList("Demo", sqlEntity)).toString();
+		String json=message;
+		JsonUtils.jsonToSQLEntity(json);
+		return "";
 	}
 }

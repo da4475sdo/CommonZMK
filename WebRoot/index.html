@@ -7,6 +7,7 @@
     <meta http-equiv="description" content="this is my page">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="js/jquery/jquery-3.1.0.min.js"></script>
+      <script type="text/javascript" src="js/json/json2.js"></script>
     <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
 
   </head>
@@ -14,7 +15,34 @@
   <body>
     This is my HTML page. <br>
 	<script type="text/javascript">
-    	$.post("demo.do",{message:"zmk"},function(result){
+        var json={
+        "properties":["demoID","name"],
+                "condition":[
+            {
+                "relation":"and",
+                "name":"demoID",
+                "value":"111",
+                "operation":"=",
+                "isCombination":false,
+                "type":0,
+                "paramName":"demoID"
+            },
+            {
+                "name":"name",
+                "value":"zmk",
+                "operation":"=",
+                "isCombination":false,
+                "type":0,
+                "paramName":"name"
+            }
+        ],
+                "sortField":"demoID",
+                "order":"desc",
+                "pagination":1,
+                "limit":10,
+                "needLink":false
+        };
+    	$.post("demo.do",{message:JSON.stringify(json)},function(result){
     	    document.write(result);
     	  });
     </script>
