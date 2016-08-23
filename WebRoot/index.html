@@ -16,33 +16,52 @@
     This is my HTML page. <br>
 	<script type="text/javascript">
         var json={
-        "properties":["demoID","name"],
+        "properties":["de.demoID","de.name"],
                 "condition":[
             {
                 "relation":"and",
-                "name":"demoID",
-                "value":"111",
+                "name":"de.demoID",
+                "value":"333",
                 "operation":"=",
                 "isCombination":false,
                 "type":0,
                 "paramName":"demoID"
             },
             {
-                "name":"name",
+                "name":"de.name",
                 "value":"zmk",
                 "operation":"=",
-                "isCombination":false,
+                "isCombination":true,
+                "conditionConbination":[
+	                {
+		                "relation":"or",
+		                "name":"de.age",
+		                "value":"22",
+		                "operation":"=",
+		                "isCombination":false,
+		                "type":0,
+		                "paramName":"age"
+	           		 }, {
+		                "name":"de.name",
+		                "value":"zmk",
+		                "operation":"=",
+		                "isCombination":false,
+		                "type":0,
+		                "paramName":"name"
+	           		 }
+                ],
                 "type":0,
                 "paramName":"name"
             }
         ],
-                "sortField":"demoID",
-                "order":"desc",
-                "pagination":1,
+                "sortField":["de.demoID"],
+                "order":["desc"],
+                "pagination":0,
                 "limit":10,
-                "needLink":false
+                "needLink":true
         };
-    	$.post("demo.do",{message:JSON.stringify(json)},function(result){
+        var jsons=JSON.stringify(json)
+    	$.post("demo.do",{message:jsons},function(result){
     	    document.write(result);
     	  });
     </script>

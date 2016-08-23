@@ -2,10 +2,12 @@ package utils.json;
 
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+
 import entity.sqlEntity.SQLEntity;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 public class JsonUtils {
 	public static String listMapToJson(List<Map<String,Object>> dataList){
@@ -14,8 +16,8 @@ public class JsonUtils {
 	}
 	
 	public static SQLEntity jsonToSQLEntity(String json){
-		JSONObject jsonObj=JSONObject.fromObject(json);
-		SQLEntity sqlEntity=(SQLEntity)JSONObject.toBean(jsonObj,SQLEntity.class);
+		Gson gson=new Gson();
+		SQLEntity sqlEntity=gson.fromJson(json,SQLEntity.class);
 		return sqlEntity;
 	} 
 }

@@ -179,6 +179,7 @@ public class HibernateUtils {
 				hql.append(" ").append(name).append(operation).append(":").append(paramName).append(" ").append(relation);
 			}else{
 				List<ConditionEntity> CombinationCons=condition.getConditionConbination();
+				conditions.addAll(CombinationCons);
 				hql.append(" (");
 				generateConditions(CombinationCons, hql);
 				hql.append(") ");
