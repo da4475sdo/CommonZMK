@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import service.demoService.Interface.IDemoService;
+import utils.file.fineFile.UploadReceiver;
 import utils.json.JsonUtils;
 import dao.util.SQLOperatorUtil;
 import entity.demo.Demo;
@@ -30,7 +31,7 @@ public class DemoController {
 	
 	@RequestMapping(path="/demo",method=RequestMethod.POST)
 	public String demoPut(@ModelAttribute("message") String message){
-		
+		UploadReceiver file=new UploadReceiver();
 		String json=message;
 		SQLEntity sqlEntity = JsonUtils.jsonToSQLEntity(json);
 		return JSONArray.fromObject(daoService.getLinkedDataList("Demo","demoQuery", sqlEntity)).toString();
