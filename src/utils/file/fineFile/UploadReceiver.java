@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
 //commented code blocks are only used for CORS environments
 public class UploadReceiver extends HttpServlet
 {
-    private static final File UPLOAD_DIR = new File("test/uploads");
-    private static File TEMP_DIR = new File("test/uploadsTemp");
+    private static final File UPLOAD_DIR = new File(UploadReceiver.class.getResource("/").getPath()+"/content");
+    private static File TEMP_DIR = new File(UploadReceiver.class.getResource("/").getPath()+"/content");
 
     private static String CONTENT_LENGTH = "Content-Length";
     private static int SUCCESS_RESPONSE_CODE = 200;
@@ -30,6 +30,7 @@ public class UploadReceiver extends HttpServlet
     public void init() throws ServletException
     {
         UPLOAD_DIR.mkdirs();
+        super.init();
     }
 
     @Override
