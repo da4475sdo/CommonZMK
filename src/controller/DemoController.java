@@ -41,6 +41,6 @@ public class DemoController {
 		/*String json=message;
 		SQLEntity sqlEntity = JsonUtils.jsonToSQLEntity(json);
 		return JSONArray.fromObject(daoService.getLinkedDataList("Demo","demoQuery", sqlEntity)).toString();*/
-		return "1";
+		return "{\"success\":true}";
 	}
 }
