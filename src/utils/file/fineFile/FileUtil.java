@@ -2,6 +2,8 @@ package utils.file.fineFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,8 +37,15 @@ public class FileUtil {
 	    	      System.out.println("上传文件的类型:" + item.getContentType());
 	    	      // item.getName()返回上传文件在客户端的完整路径名称
 	    	      System.out.println("上传文件的名称:" + item.getName());
-	    	      File tempFile = new File(item.getName());
-	    	      File file = new File(basePath+"\\content\\"+tempFile);
+	    	      //创建当前日期的文件夹
+	    	      Date currentDate=new Date();
+		    	  SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		    	  String currentDay=sdf.format(currentDate);
+		    	  File directory=new File(basePath+"\\content\\"+currentDay);
+		    	  if(!directory.exists()&&!directory.isDirectory()){
+		    		  directory.mkdir();
+		    	  }
+	    	      File file = new File(directory.getPath()+"\\"+item.getName());
 	    	      item.write(file);
 	    	      req.setAttribute("upload.message", "上传文件成功！");
     	     }else{

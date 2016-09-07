@@ -1,20 +1,26 @@
 /**
  * Created by Administrator on 2016/9/7.
  */
-var timer;
-$(document).ready(function() {
-    timer=setInterval(fileUploadInit,1000);
-});
+var fileUpload={
+		timer:null,
+		options:null
+}
 
-function fileUploadInit(){
-    var templateContent=document.getElementById("qq-template-manual-trigger");
+function fileUploadInit(options){
+	fileUpload.options=options;
+	fileUpload.timer=setInterval(fileUploadConfig,300);
+}
+
+function fileUploadConfig(){
+	var options=fileUpload.options;
+    var templateContent=document.getElementById(options.templateID);
     if(templateContent){
         var manualUploader = new qq.FineUploader({
-            element: document.getElementById('fine-uploader-manual-trigger'),
-            template: 'qq-template-manual-trigger',
+            element: document.getElementById(options.templateContainer),
+            template: options.templateID,
             request: {
-                endpoint: 'demo.do',
-                method: 'POST'
+                endpoint: options.url,
+                method: options.method
             },
             thumbnails: {
                 placeholders: {
@@ -22,7 +28,7 @@ function fileUploadInit(){
                     notAvailablePath: 'js/fine-uploader/placeholders/not_available-generic.png'
                 }
             },
-            autoUpload: false,
+            autoUpload: options.isAutoUpload,
             debug: true
         });
 

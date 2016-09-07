@@ -66,7 +66,17 @@
     	$.post("demo.do",{message:jsons},function(result){
     	    document.write(result);
     	  });*/
+    	  $(document).ready(function(){
+    		  var options={
+    				  templateID:'qq-template-manual-trigger',
+    				  templateContainer:'fine-uploader-manual-trigger',
+    				  url:'demo.do',
+    				  method:'POST',
+    				  isAutoUpload:false
+    		  };
+    		  fileUploadInit(options); 
+    	  });
     </script>
-  <script type="text/javascript" src="js/demo/fileUpload.js"></script>
+  <script type="text/javascript" src="js/fileUpload/fileUpload.js"></script>
   </body>
 </html>
