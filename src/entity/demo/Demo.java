@@ -4,7 +4,7 @@ import javax.persistence.*;
 import entity.AbstractEntity;
 
 
-@Entity
+@Entity(name="demo")
 @Table(name="demo")
 public class Demo extends AbstractEntity{
 	private String demoID;
