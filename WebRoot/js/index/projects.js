@@ -26,4 +26,13 @@ mainApp.controller('projects_ctrl', function($scope,$route,$http) {
 		}
 		return str;
 	}
+    //轮播控制
+    // 循环轮播到上一个项目
+    $(".prev-slide").click(function(){
+        $("#project-carousel").carousel('prev');
+    });
+    // 循环轮播到下一个项目
+    $(".next-slide").click(function(){
+        $("#project-carousel").carousel('next');
+    });
 });

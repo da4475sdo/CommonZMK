@@ -29,7 +29,7 @@
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
         <property name="locations">  
            <list>  
-              <value>classpath:config/jdbc.properties</value>  
+              <value>classpath:config/jdbc.properties</value>
             </list>  
         </property>  
     </bean> 
@@ -56,6 +56,7 @@
  				hibernate.hbm2ddl.auto=update
  				hibernate.show_sql=true
  				hibernate.format_sql=false
+ 				hibernate.connection.release_mode=after_statement
  			</value>
   		</property>
     </bean>

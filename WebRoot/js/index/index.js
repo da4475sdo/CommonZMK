@@ -9,6 +9,10 @@ var mainApp=angular.module('index_app',['ngRoute'])
 		        	templateUrl:'template/index/projects.html',
 		        	controller:'projects_ctrl'	
 		        	})
+                .when('/project-carousel',{
+                    templateUrl:'template/index/projects.html',
+                    controller:'projects_ctrl'
+                })
 		        .otherwise({redirectTo:'/'});
 	}])
 	.config(function($httpProvider) {

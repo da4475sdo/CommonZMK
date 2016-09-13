@@ -92,6 +92,10 @@ h6 {
     letter-spacing: 2px;
 }
 
+.main-content{
+    min-height:800px;
+}
+
 .content-section-a {
     padding: 50px 0;
     background-color: #f8f8f8;
@@ -176,8 +180,9 @@ p.copyright {
     color: #f8f8f8;
 }
 
-a.thumbnail:hover{
-   text-decoration: none;
+.main-item:focus,.main-item:hover{
+	border-color: #337ab7;
+	cursor: pointer;
 }
 
 .caption-desc{
