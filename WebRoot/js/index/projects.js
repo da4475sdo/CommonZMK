@@ -4,7 +4,6 @@
 mainApp.controller('projects_ctrl', function($scope,$route,$http) {
 	var json={
             "properties":["projectID","pic","title","description"],
-            "pagination":1,
             "sortField":["projectID"],
             "order":["desc"],
             "pagination":0,
@@ -26,13 +25,53 @@ mainApp.controller('projects_ctrl', function($scope,$route,$http) {
 		}
 		return str;
 	}
-    //轮播控制
-    // 循环轮播到上一个项目
+	
+	$scope.getProjectDetails=function (obj){
+		var projectID=obj.project.projectID;
+		var projectDetailJson={
+	            "properties":["projectDetailID","projectPic","projectDescription"],
+	            "condition":[{
+	            	name:'projectID',
+	            	value:projectID,
+	            	operation:'=',
+	            	isCombination:'false',
+	            	type:0,
+	            	paramName:'projectID'
+	            }],
+	            "sortField":["projectDetailID"],
+	            "order":["asc"],
+	            "pagination":0,
+	            "limit":20,
+	            "needLink":false
+		};
+		
+		$http({
+			 method: 'POST',
+			 url: 'getProjectDetails.do',
+			 data: { conditionJson: JSON.stringify(projectDetailJson) }
+			}).then(function(response) {
+				var dataList=response.data;
+				for(var i=0,len=dataList.length;i<len;i++){
+					if(i!==0){
+						dataList[i].active="";
+					}else{
+						dataList[i].active="active";
+					}
+				}
+				$scope.projectDetails = dataList;
+		});
+	}
+	
     $(".prev-slide").click(function(){
         $("#project-carousel").carousel('prev');
     });
-    // 循环轮播到下一个项目
+
     $(".next-slide").click(function(){
         $("#project-carousel").carousel('next');
     });
+    
+    $('#project-detail-modal').on('hide.bs.modal', function () {
+    	$('#project-carousel').carousel('pause');
+    	$('#project-carousel').carousel(0);
+    })
 });
