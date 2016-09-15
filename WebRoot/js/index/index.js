@@ -4,14 +4,21 @@
 var mainApp=angular.module('index_app',['ngRoute'])
 	.config(['$routeProvider', function($routeProvider){
 		    $routeProvider
-		        .when('/',{templateUrl:'template/index/home.html'})
-		        .when('/projects',{
+		        .when('/',{
+		        	templateUrl:'template/index/home.html',
+		        	controller:'home_ctrl'
+		        	})
+		        .when('/projects/',{
 		        	templateUrl:'template/index/projects.html',
 		        	controller:'projects_ctrl'	
 		        	})
-                .when('/project-carousel',{
-                    templateUrl:'template/index/projects.html',
-                    controller:'projects_ctrl'
+                .when('/about/',{
+                    templateUrl:'template/index/about.html',
+                    controller:'about_ctrl'
+                })
+                .when('/contact/',{
+                    templateUrl:'template/index/contact.html',
+                    controller:'contact_ctrl'
                 })
 		        .otherwise({redirectTo:'/'});
 	}])
@@ -63,3 +70,4 @@ var mainApp=angular.module('index_app',['ngRoute'])
 					: data;
 			}];
 		});
+		

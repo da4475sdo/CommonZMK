@@ -2,6 +2,9 @@
  * Created by Administrator on 2016/9/11.
  */
 mainApp.controller('projects_ctrl', function($scope,$route,$http) {
+	//设置title
+	$(document).attr('title','Projects');
+	
 	var json={
             "properties":["projectID","pic","title","description"],
             "sortField":["projectID"],
