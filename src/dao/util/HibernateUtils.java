@@ -239,6 +239,7 @@ public class HibernateUtils {
 		//²éÑ¯Êı¾İ
 		List<?> list=query.list();
 		List<Map<String,Object>> dataList=sqlListToListMap(list,properties);
+		session.close();
 		return dataList;
 	}
 }
